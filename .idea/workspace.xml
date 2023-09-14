@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="74bd28e4-ede9-4bbb-a92f-dae249a45c06" name="Changes" comment="21 is not yet released">
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="74bd28e4-ede9-4bbb-a92f-dae249a45c06" name="Changes" comment="Ajout test.txt">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mapper/src/main/java/com/github/forax/framework/mapper/JSONWriter.java" beforeDir="false" afterPath="$PROJECT_DIR$/mapper/src/main/java/com/github/forax/framework/mapper/JSONWriter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/mapper/src/test/java/com/github/forax/framework/mapper/JSONWriterTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/mapper/src/test/java/com/github/forax/framework/mapper/JSONWriterTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -47,7 +46,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "full.screen.before.presentation.mode": "false",
     "git-widget-placeholder": "master",
-    "last_opened_file_path": "/home/alex-baiet/Documents/esipe/inside/write_your_own_java_framework_exercices",
+    "last_opened_file_path": "/home/alex-baiet/Documents/esipe/inside/write_your_own_java_framework_exercices_old",
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2"
@@ -75,7 +74,7 @@
       <command value="mvn package" />
     </option>
   </component>
-  <component name="RunManager" selected="JUnit.JSONWriterTest$Q1">
+  <component name="RunManager" selected="JUnit.JSONWriterTest$Q6">
     <configuration name="JSONWriterTest$Q1" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="mapper" />
       <extension name="coverage">
@@ -86,6 +85,21 @@
       </extension>
       <option name="PACKAGE_NAME" value="com.github.forax.framework.mapper.JSONWriterTest" />
       <option name="MAIN_CLASS_NAME" value="com.github.forax.framework.mapper.JSONWriterTest$Q1" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="JSONWriterTest$Q6" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="mapper" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.github.forax.framework.mapper.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.github.forax.framework.mapper.JSONWriterTest" />
+      <option name="MAIN_CLASS_NAME" value="com.github.forax.framework.mapper.JSONWriterTest$Q6" />
       <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -137,28 +151,13 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="ORMTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="orm" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="com.github.forax.framework.orm.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="com.github.forax.framework.orm" />
-      <option name="MAIN_CLASS_NAME" value="com.github.forax.framework.orm.ORMTest" />
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.JSONWriterTest$Q6" />
         <item itemvalue="JUnit.JSONWriterTest$Q1" />
         <item itemvalue="JUnit.ORMTest$Q13" />
         <item itemvalue="JUnit.ORMTest$Q12" />
         <item itemvalue="JUnit.ORMTest$Q12.testUserDefinedQueryPerson" />
-        <item itemvalue="JUnit.ORMTest" />
       </list>
     </recent_temporary>
   </component>
@@ -171,6 +170,15 @@
       <option name="presentableId" value="Default" />
       <updated>1694695188528</updated>
     </task>
+    <task id="LOCAL-00001" summary="Ajout test.txt">
+      <option name="closed" value="true" />
+      <created>1694695505386</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1694695505386</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -186,7 +194,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="update IDEA files" />
     <MESSAGE value="add maven cache" />
     <MESSAGE value="remove cache from github action" />
     <MESSAGE value="fix typos in README.md" />
@@ -211,6 +218,7 @@
     <MESSAGE value="move to Java 21" />
     <MESSAGE value="add mdule IntelliJ file" />
     <MESSAGE value="21 is not yet released" />
-    <option name="LAST_COMMIT_MESSAGE" value="21 is not yet released" />
+    <MESSAGE value="Ajout test.txt" />
+    <option name="LAST_COMMIT_MESSAGE" value="Ajout test.txt" />
   </component>
 </project>
