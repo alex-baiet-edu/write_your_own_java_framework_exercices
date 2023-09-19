@@ -1,0 +1,277 @@
+Index: injector/.~lock.rendu.odp#
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/injector/.~lock.rendu.odp# b/injector/.~lock.rendu.odp#
+new file mode 100644
+--- /dev/null	(date 1695107867744)
++++ b/injector/.~lock.rendu.odp#	(date 1695107867744)
+@@ -0,0 +1,1 @@
++,alex-baiet,alex-baiet-pc,19.09.2023 09:17,file:///home/alex-baiet/.config/libreoffice/4;
+\ No newline at end of file
+Index: .idea/codeStyles/codeStyleConfig.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/codeStyles/codeStyleConfig.xml b/.idea/codeStyles/codeStyleConfig.xml
+new file mode 100644
+--- /dev/null	(date 1694697812829)
++++ b/.idea/codeStyles/codeStyleConfig.xml	(date 1694697812829)
+@@ -0,0 +1,5 @@
++<component name="ProjectCodeStyleConfiguration">
++  <state>
++    <option name="PREFERRED_PROJECT_CODE_STYLE" value="Default" />
++  </state>
++</component>
+\ No newline at end of file
+Index: mapper/src/test/java/com/github/forax/framework/mapper/JSONWriterTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.github.forax.framework.mapper;\n\nimport org.junit.jupiter.api.Nested;\nimport org.junit.jupiter.api.Tag;\nimport org.junit.jupiter.api.Test;\n\nimport java.sql.Timestamp;\nimport java.time.LocalDateTime;\nimport java.time.LocalTime;\nimport java.time.MonthDay;\nimport java.time.format.DateTimeFormatter;\n\nimport static org.junit.jupiter.api.Assertions.assertAll;\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.junit.jupiter.api.Assertions.assertThrows;\nimport static org.junit.jupiter.api.Assertions.assertTrue;\n\n@SuppressWarnings({\"unused\", \"static-method\"})\npublic class JSONWriterTest {\n\n  @Nested\n  public class Q1 {\n    @Test @Tag(\"Q1\")\n    public void toJSONPrimitive() {\n      var writer = new JSONWriter();\n      assertAll(\n          () -> assertEquals(\"null\", writer.toJSON(null)),\n          () -> assertEquals(\"true\", writer.toJSON(true)),\n          () -> assertEquals(\"false\", writer.toJSON(false)),\n          () -> assertEquals(\"3\", writer.toJSON(3)),\n          () -> assertEquals(\"4.0\", writer.toJSON(4.0)),\n          () -> assertEquals(\"\\\"foo\\\"\", writer.toJSON(\"foo\"))\n      );\n    }\n  }  // end of Q1\n\n\n  public static class Car {\n    private final String owner;\n\n    public Car(String owner) {\n      this.owner = owner;\n    }\n\n    public String getOwner() {\n      return owner;\n    }\n  }\n\n  public static class Alien {\n    private final String name;\n    private final String planet;\n\n    public Alien(String name, String planet) {\n      this.name = name;\n      this.planet = planet;\n    }\n\n    public String getName() {\n      return name;\n    }\n\n    public String getPlanet() {\n      return planet;\n    }\n  }\n\n  @Nested\n  public class Q2 {\n    @Test @Tag(\"Q2\")\n    public void toJSONWithASimpleClass() {\n      var writer = new JSONWriter();\n      var car = new Car(\"Marty\");\n      var json = writer.toJSON(car);\n      assertEquals(\"\"\"\n          {\"owner\": \"Marty\"}\\\n          \"\"\", json);\n    }\n\n    @Test @Tag(\"Q2\")\n    public void toJSONWithAClass() {\n      var writer = new JSONWriter();\n      var alien = new Alien(\"Elvis\", \"Proxima Centauri\");\n      var json = writer.toJSON(alien);\n      var expected1 = \"\"\"\n          {\"name\": \"Elvis\", \"planet\": \"Proxima Centauri\"}\\\n          \"\"\";\n      var expected2 = \"\"\"\n          {\"planet\": \"Proxima Centauri\", \"name\": \"Elvis\"}\\\n          \"\"\";\n      assertTrue(\n          json.equals(expected1) || json.equals(expected2),\n          \"error: \" + json + \"\\n expects either \" + expected1 + \" or \" + expected2\n      );\n    }\n\n    @Test @Tag(\"Q2\")\n    public void toJSONEmptyClass() {\n      class Empty { }\n      var writer = new JSONWriter();\n      var empty = new Empty();\n      var json = writer.toJSON(empty);\n      assertEquals(\"{}\", json);\n    }\n\n  } // end of Q2\n\n\n  public static final class Person {\n    private final String firstName;\n    private final String lastName;\n\n    public Person(String firstName, String lastName) {\n      this.firstName = firstName;\n      this.lastName = lastName;\n    }\n\n    @JSONProperty(\"first-name\")\n    public String getFirstName() {\n      return firstName;\n    }\n\n    @JSONProperty(\"last-name\")\n    public String getLastName() {\n      return lastName;\n    }\n  }\n\n  public static class StartDate {\n    private final LocalDateTime time;\n\n    public StartDate(LocalDateTime time) {\n      this.time = time;\n    }\n\n    public LocalDateTime getTime() {\n      return time;\n    }\n  }\n\n/*\n  @Nested\n  public class Q5 {\n    @Test @Tag(\"Q5\")\n    public void toJSONWithConfigure() {\n      var writer = new JSONWriter();\n      writer.configure(LocalDateTime.class, time -> time.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));\n      assertEquals(\"2021-06-16T20:53:17\", writer.toJSON(LocalDateTime.of(2021, 6, 16, 20, 53, 17)));\n    }\n\n    @Test @Tag(\"Q5\")\n    public void toJSONBeanWithConfigure() {\n      var writer = new JSONWriter();\n      writer.configure(LocalDateTime.class, time -> time.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));\n      var startDate = new StartDate(LocalDateTime.of(2021, 7, 1, 20, 7));\n      var json = writer.toJSON(startDate);\n      assertEquals(\"\"\"\n      {\"time\": 2021-07-01T20:07:00}\\\n      \"\"\", json);\n    }\n\n    @Test @Tag(\"Q5\")\n    public void configureTwice() {\n      var writer = new JSONWriter();\n      writer.configure(LocalTime.class, __ -> \"foo\");\n      assertThrows(IllegalStateException.class, () -> writer.configure(LocalTime.class, __ -> \"bar\"));\n    }\n\n    @Test @Tag(\"Q5\")\n    public void configurePreconditions() {\n      var writer = new JSONWriter();\n      assertAll(\n          () -> assertThrows(NullPointerException.class, () -> writer.configure(null, String::toString)),\n          () -> assertThrows(NullPointerException.class, () -> writer.configure(Timestamp.class, null))\n      );\n    }\n\n  } // end of Q5\n*/\n  @Nested\n  public class Q6 {\n    @Test @Tag(\"Q6\")\n    public void toJSONWithJSONProperty() {\n      var writer = new JSONWriter();\n      var person = new Person(\"Bob\", \"Hunky\");\n      var json = writer.toJSON(person);\n      assertEquals(\"\"\"\n          {\"first-name\": \"Bob\", \"last-name\": \"Hunky\"}\\\n          \"\"\",\n          json);\n    }\n\n  } // end of Q6\n\n\n  public static class AddressInfo {\n    private boolean international;\n\n    public boolean isInternational() {\n      return international;\n    }\n  }\n\n  public record PersonInfo(@JSONProperty(\"birth-day\") MonthDay birthday, AddressInfo address) { }\n\n  @Nested\n  public class Q7 {\n    @Test @Tag(\"Q7\")\n    public void toJSONWithARecord() {\n      record Person(String name, int age) { }\n      var writer = new JSONWriter();\n      var person = new Person(\"Ana\", 37);\n      var json = writer.toJSON(person);\n      assertEquals(\"\"\"\n          {\"name\": \"Ana\", \"age\": 37}\\\n          \"\"\",\n          json);\n    }\n\n    @Test @Tag(\"Q7\")\n    public void toJSONEmptyRecord() {\n      record Empty() { }\n      var writer = new JSONWriter();\n      var empty = new Empty();\n      var json = writer.toJSON(empty);\n      assertEquals(\"{}\", json);\n    }\n\n    @Test @Tag(\"Q7\")\n    public void toJSONRecursive() {\n      record Address(String street) { }\n      record Person(String name, Address address) { }\n      var writer = new JSONWriter();\n      var person = new Person(\"Bob\", new Address(\"21 Jump Street\"));\n      var json = writer.toJSON(person);\n      assertEquals(\"\"\"\n          {\"name\": \"Bob\", \"address\": {\"street\": \"21 Jump Street\"}}\\\n          \"\"\",\n          json);\n    }\n/*\n    @Test @Tag(\"Q7\")\n    public void toJSONFullExample() {\n      var writer = new JSONWriter();\n      writer.configure(MonthDay.class, monthDay -> writer.toJSON(monthDay.getMonth() + \"-\" + monthDay.getDayOfMonth()));\n      var person = new PersonInfo(MonthDay.of(4, 17), new AddressInfo());\n      var json = writer.toJSON(person);\n      assertEquals(\"\"\"\n          {\"birth-day\": \"APRIL-17\", \"address\": {\"international\": false}}\\\n          \"\"\",\n          json);\n    }\n*/\n  }  // end of Q7\n\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/mapper/src/test/java/com/github/forax/framework/mapper/JSONWriterTest.java b/mapper/src/test/java/com/github/forax/framework/mapper/JSONWriterTest.java
+--- a/mapper/src/test/java/com/github/forax/framework/mapper/JSONWriterTest.java	(revision 7886e4d441e87702b2fd1c4a269575ba8d54b655)
++++ b/mapper/src/test/java/com/github/forax/framework/mapper/JSONWriterTest.java	(date 1694700125629)
+@@ -138,7 +138,7 @@
+     }
+   }
+ 
+-/*
++
+   @Nested
+   public class Q5 {
+     @Test @Tag("Q5")
+@@ -176,7 +176,7 @@
+     }
+ 
+   } // end of Q5
+-*/
++
+   @Nested
+   public class Q6 {
+     @Test @Tag("Q6")
+Index: mapper/src/main/java/com/github/forax/framework/mapper/JSONWriter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.github.forax.framework.mapper;\n\nimport java.beans.BeanInfo;\nimport java.beans.IntrospectionException;\nimport java.beans.Introspector;\nimport java.beans.PropertyDescriptor;\nimport java.util.Arrays;\nimport java.util.List;\nimport java.util.stream.Collectors;\n\npublic final class JSONWriter {\n  private interface Generator {\n    String generate(JSONWriter writer, Object bean);\n  }\n\n  private static final ClassValue<List<Generator>> CACHE = new ClassValue<List<Generator>>() {\n    @Override\n    protected List<Generator> computeValue(Class<?> type) {\n      var beanInfo = Utils.beanInfo(type).getPropertyDescriptors();\n\n      return Arrays.stream(beanInfo)\n              .filter(prop -> !prop.getName().equals(\"class\"))\n              .<Generator>map(prop -> {\n                        String key;\n                        var annotation = prop.getReadMethod().getAnnotation(JSONProperty.class);\n                        if (annotation != null) {\n                          key = String.format(\"\\\"%s\\\": \", annotation.value());\n                        } else {\n                          key = String.format(\"\\\"%s\\\": \", prop.getName());\n                        }\n                        return (writer, bean) -> key + writer.toJSON(Utils.invokeMethod(bean, prop.getReadMethod()));\n                      }\n              ).toList();\n\n    }\n  };\n\n  public String toJSON(Object o) {\n    return switch (o) {\n      case null -> \"null\";\n      case Boolean bool -> bool.toString();\n      case Integer integer -> integer.toString();\n      case String str -> '\"' + str + '\"';\n      case Double dou -> dou.toString();\n      default -> {\n        yield objectToJson(o);\n      }\n    };\n  }\n\n  private String objectToJson(Object o) {\n    BeanInfo beanInfo;\n\n    List<Generator> properties = CACHE.get(o.getClass());\n\n    /*return \"{\" + Arrays.stream(properties)\n            .filter(prop -> !prop.getName().equals(\"class\"))\n            .map(prop -> String.format(\"\\\"%s\\\": %s\", prop.getName(), toJSON(Utils.invokeMethod(o, prop.getReadMethod()))))\n            .collect(Collectors.joining(\", \")) + \"}\";*/\n    return \"{\" + properties.stream()\n            .map(generator -> generator.generate(this, o))\n            .collect(Collectors.joining(\", \")) + \"}\";\n  }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/mapper/src/main/java/com/github/forax/framework/mapper/JSONWriter.java b/mapper/src/main/java/com/github/forax/framework/mapper/JSONWriter.java
+--- a/mapper/src/main/java/com/github/forax/framework/mapper/JSONWriter.java	(revision 7886e4d441e87702b2fd1c4a269575ba8d54b655)
++++ b/mapper/src/main/java/com/github/forax/framework/mapper/JSONWriter.java	(date 1694700557051)
+@@ -5,7 +5,10 @@
+ import java.beans.Introspector;
+ import java.beans.PropertyDescriptor;
+ import java.util.Arrays;
++import java.util.HashMap;
+ import java.util.List;
++import java.util.Objects;
++import java.util.function.Function;
+ import java.util.stream.Collectors;
+ 
+ public final class JSONWriter {
+@@ -21,6 +24,7 @@
+       return Arrays.stream(beanInfo)
+               .filter(prop -> !prop.getName().equals("class"))
+               .<Generator>map(prop -> {
++                        // Generating name of object variable
+                         String key;
+                         var annotation = prop.getReadMethod().getAnnotation(JSONProperty.class);
+                         if (annotation != null) {
+@@ -28,6 +32,7 @@
+                         } else {
+                           key = String.format("\"%s\": ", prop.getName());
+                         }
++
+                         return (writer, bean) -> key + writer.toJSON(Utils.invokeMethod(bean, prop.getReadMethod()));
+                       }
+               ).toList();
+@@ -35,7 +40,10 @@
+     }
+   };
+ 
++  private static final HashMap<Class<?>, Function> config = new HashMap<>();
++
+   public String toJSON(Object o) {
++    Objects.requireNonNull(o);
+     return switch (o) {
+       case null -> "null";
+       case Boolean bool -> bool.toString();
+@@ -43,13 +51,28 @@
+       case String str -> '"' + str + '"';
+       case Double dou -> dou.toString();
+       default -> {
++
++        // Execute config before transformation to JSON
++        if (config.containsKey(o.getClass())) {
++          o = config.get(o.getClass()).apply(o);
++        }
++
+         yield objectToJson(o);
+       }
+     };
+   }
+ 
++  public <T> void configure (Class<T> type, Function<T, String> lambda) {
++    config.put(type, lambda);
++  }
++
+   private String objectToJson(Object o) {
+-    BeanInfo beanInfo;
++    var type = o.getClass();
++    // test d'égalité ne marche pas
++    if (config.containsKey(type)) {
++      System.out.println("coucou");
++      return (String)config.get(type).apply(o);
++    }
+ 
+     List<Generator> properties = CACHE.get(o.getClass());
+ 
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"AutoImportSettings\">\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\n  </component>\n  <component name=\"ChangeListManager\">\n    <list default=\"true\" id=\"74bd28e4-ede9-4bbb-a92f-dae249a45c06\" name=\"Changes\" comment=\"Ajout test.txt\">\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/mapper/src/main/java/com/github/forax/framework/mapper/JSONWriter.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/mapper/src/main/java/com/github/forax/framework/mapper/JSONWriter.java\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/mapper/src/test/java/com/github/forax/framework/mapper/JSONWriterTest.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/mapper/src/test/java/com/github/forax/framework/mapper/JSONWriterTest.java\" afterDir=\"false\" />\n    </list>\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\n  </component>\n  <component name=\"Git.Settings\">\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\n    <option name=\"UPDATE_TYPE\" value=\"REBASE\" />\n  </component>\n  <component name=\"GitSEFilterConfiguration\">\n    <file-type-list>\n      <filtered-out-file-type name=\"LOCAL_BRANCH\" />\n      <filtered-out-file-type name=\"REMOTE_BRANCH\" />\n      <filtered-out-file-type name=\"TAG\" />\n      <filtered-out-file-type name=\"COMMIT_BY_MESSAGE\" />\n    </file-type-list>\n  </component>\n  <component name=\"MarkdownSettingsMigration\">\n    <option name=\"stateVersion\" value=\"1\" />\n  </component>\n  <component name=\"ProjectColorInfo\">{\n  &quot;associatedIndex&quot;: 8\n}</component>\n  <component name=\"ProjectId\" id=\"1z3S0SHERWbIdD5Lf6CT5zlczbJ\" />\n  <component name=\"ProjectLevelVcsManager\">\n    <ConfirmationsSetting value=\"2\" id=\"Add\" />\n  </component>\n  <component name=\"ProjectViewState\">\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\n    <option name=\"showLibraryContents\" value=\"true\" />\n  </component>\n  <component name=\"PropertiesComponent\"><![CDATA[{\n  \"keyToString\": {\n    \"RunOnceActivity.OpenProjectViewOnStart\": \"true\",\n    \"RunOnceActivity.ShowReadmeOnStart\": \"true\",\n    \"full.screen.before.presentation.mode\": \"false\",\n    \"git-widget-placeholder\": \"master\",\n    \"last_opened_file_path\": \"/home/alex-baiet/Documents/esipe/inside/write_your_own_java_framework_exercices_old\",\n    \"project.structure.last.edited\": \"Modules\",\n    \"project.structure.proportion\": \"0.15\",\n    \"project.structure.side.proportion\": \"0.2\"\n  }\n}]]></component>\n  <component name=\"RecentsManager\">\n    <key name=\"CopyFile.RECENT_KEYS\">\n      <recent name=\"$PROJECT_DIR$/orm/src/main/java/com/github/forax/framework/orm\" />\n      <recent name=\"$PROJECT_DIR$/orm\" />\n      <recent name=\"$PROJECT_DIR$/mapper/src/main/java/com/github/forax/framework/mapper\" />\n      <recent name=\"$PROJECT_DIR$/mapper\" />\n      <recent name=\"$PROJECT_DIR$/interceptor/src/main/java/org/github/forax/framework/interceptor\" />\n    </key>\n    <key name=\"CopyClassDialog.RECENTS_KEY\">\n      <recent name=\"org.github.forax.framework.interceptor\" />\n      <recent name=\"com.github.forax.framework.orm\" />\n    </key>\n    <key name=\"ImportExportFile.TargetDir.RECENT_KEYS\">\n      <recent name=\"$PROJECT_DIR$\" />\n    </key>\n  </component>\n  <component name=\"RunAnythingCache\">\n    <option name=\"myCommands\">\n      <command value=\"mvn clean\" />\n      <command value=\"mvn package\" />\n    </option>\n  </component>\n  <component name=\"RunManager\" selected=\"JUnit.JSONWriterTest$Q6\">\n    <configuration name=\"JSONWriterTest$Q1\" type=\"JUnit\" factoryName=\"JUnit\" temporary=\"true\" nameIsGenerated=\"true\">\n      <module name=\"mapper\" />\n      <extension name=\"coverage\">\n        <pattern>\n          <option name=\"PATTERN\" value=\"com.github.forax.framework.mapper.*\" />\n          <option name=\"ENABLED\" value=\"true\" />\n        </pattern>\n      </extension>\n      <option name=\"PACKAGE_NAME\" value=\"com.github.forax.framework.mapper.JSONWriterTest\" />\n      <option name=\"MAIN_CLASS_NAME\" value=\"com.github.forax.framework.mapper.JSONWriterTest$Q1\" />\n      <option name=\"TEST_OBJECT\" value=\"class\" />\n      <method v=\"2\">\n        <option name=\"Make\" enabled=\"true\" />\n      </method>\n    </configuration>\n    <configuration name=\"JSONWriterTest$Q6\" type=\"JUnit\" factoryName=\"JUnit\" temporary=\"true\" nameIsGenerated=\"true\">\n      <module name=\"mapper\" />\n      <extension name=\"coverage\">\n        <pattern>\n          <option name=\"PATTERN\" value=\"com.github.forax.framework.mapper.*\" />\n          <option name=\"ENABLED\" value=\"true\" />\n        </pattern>\n      </extension>\n      <option name=\"PACKAGE_NAME\" value=\"com.github.forax.framework.mapper.JSONWriterTest\" />\n      <option name=\"MAIN_CLASS_NAME\" value=\"com.github.forax.framework.mapper.JSONWriterTest$Q6\" />\n      <option name=\"TEST_OBJECT\" value=\"class\" />\n      <method v=\"2\">\n        <option name=\"Make\" enabled=\"true\" />\n      </method>\n    </configuration>\n    <configuration name=\"ORMTest$Q12\" type=\"JUnit\" factoryName=\"JUnit\" temporary=\"true\" nameIsGenerated=\"true\">\n      <module name=\"orm\" />\n      <extension name=\"coverage\">\n        <pattern>\n          <option name=\"PATTERN\" value=\"com.github.forax.framework.orm.*\" />\n          <option name=\"ENABLED\" value=\"true\" />\n        </pattern>\n      </extension>\n      <option name=\"PACKAGE_NAME\" value=\"com.github.forax.framework.orm.ORMTest\" />\n      <option name=\"MAIN_CLASS_NAME\" value=\"com.github.forax.framework.orm.ORMTest$Q12\" />\n      <option name=\"TEST_OBJECT\" value=\"class\" />\n      <method v=\"2\">\n        <option name=\"Make\" enabled=\"true\" />\n      </method>\n    </configuration>\n    <configuration name=\"ORMTest$Q12.testUserDefinedQueryPerson\" type=\"JUnit\" factoryName=\"JUnit\" temporary=\"true\" nameIsGenerated=\"true\">\n      <module name=\"orm\" />\n      <extension name=\"coverage\">\n        <pattern>\n          <option name=\"PATTERN\" value=\"com.github.forax.framework.orm.*\" />\n          <option name=\"ENABLED\" value=\"true\" />\n        </pattern>\n      </extension>\n      <option name=\"PACKAGE_NAME\" value=\"com.github.forax.framework.orm.ORMTest\" />\n      <option name=\"MAIN_CLASS_NAME\" value=\"com.github.forax.framework.orm.ORMTest$Q12\" />\n      <option name=\"METHOD_NAME\" value=\"testUserDefinedQueryPerson\" />\n      <option name=\"TEST_OBJECT\" value=\"method\" />\n      <method v=\"2\">\n        <option name=\"Make\" enabled=\"true\" />\n      </method>\n    </configuration>\n    <configuration name=\"ORMTest$Q13\" type=\"JUnit\" factoryName=\"JUnit\" temporary=\"true\" nameIsGenerated=\"true\">\n      <module name=\"orm\" />\n      <extension name=\"coverage\">\n        <pattern>\n          <option name=\"PATTERN\" value=\"com.github.forax.framework.orm.*\" />\n          <option name=\"ENABLED\" value=\"true\" />\n        </pattern>\n      </extension>\n      <option name=\"PACKAGE_NAME\" value=\"com.github.forax.framework.orm.ORMTest\" />\n      <option name=\"MAIN_CLASS_NAME\" value=\"com.github.forax.framework.orm.ORMTest$Q13\" />\n      <option name=\"TEST_OBJECT\" value=\"class\" />\n      <method v=\"2\">\n        <option name=\"Make\" enabled=\"true\" />\n      </method>\n    </configuration>\n    <recent_temporary>\n      <list>\n        <item itemvalue=\"JUnit.JSONWriterTest$Q6\" />\n        <item itemvalue=\"JUnit.JSONWriterTest$Q1\" />\n        <item itemvalue=\"JUnit.ORMTest$Q13\" />\n        <item itemvalue=\"JUnit.ORMTest$Q12\" />\n        <item itemvalue=\"JUnit.ORMTest$Q12.testUserDefinedQueryPerson\" />\n      </list>\n    </recent_temporary>\n  </component>\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\n  <component name=\"TaskManager\">\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\n      <changelist id=\"74bd28e4-ede9-4bbb-a92f-dae249a45c06\" name=\"Changes\" comment=\"21 is not yet released\" />\n      <created>1694695188528</created>\n      <option name=\"number\" value=\"Default\" />\n      <option name=\"presentableId\" value=\"Default\" />\n      <updated>1694695188528</updated>\n    </task>\n    <task id=\"LOCAL-00001\" summary=\"Ajout test.txt\">\n      <option name=\"closed\" value=\"true\" />\n      <created>1694695505386</created>\n      <option name=\"number\" value=\"00001\" />\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1694695505386</updated>\n    </task>\n    <option name=\"localTasksCounter\" value=\"2\" />\n    <servers />\n  </component>\n  <component name=\"Vcs.Log.Tabs.Properties\">\n    <option name=\"TAB_STATES\">\n      <map>\n        <entry key=\"MAIN\">\n          <value>\n            <State />\n          </value>\n        </entry>\n      </map>\n    </option>\n  </component>\n  <component name=\"VcsManagerConfiguration\">\n    <option name=\"ADD_EXTERNAL_FILES_SILENTLY\" value=\"true\" />\n    <MESSAGE value=\"add maven cache\" />\n    <MESSAGE value=\"remove cache from github action\" />\n    <MESSAGE value=\"fix typos in README.md\" />\n    <MESSAGE value=\"use List instead of Stream\" />\n    <MESSAGE value=\"update and fix typos\" />\n    <MESSAGE value=\"add a section on dependency checking\" />\n    <MESSAGE value=\"Utils.defaultConstructor and Utils.newInstance should propagate the type of the class\" />\n    <MESSAGE value=\"do not try to validate the dependency graph before calling lookup()\" />\n    <MESSAGE value=\"comment starts at the wrong place\" />\n    <MESSAGE value=\"rework interceptor code/questions\" />\n    <MESSAGE value=\"use throw switch in the tests\" />\n    <MESSAGE value=\"remove weird import that make the CI fails\" />\n    <MESSAGE value=\"update injector and rewrite annotation scanner\" />\n    <MESSAGE value=\"remove one star for the classpath scanning\" />\n    <MESSAGE value=\"SQLi =&gt; JDBi\" />\n    <MESSAGE value=\"update POM\" />\n    <MESSAGE value=\"bump to java 19\" />\n    <MESSAGE value=\"fix typos\" />\n    <MESSAGE value=\"run CI with Java 19\" />\n    <MESSAGE value=\"fix typo\" />\n    <MESSAGE value=\"update to Java 21\" />\n    <MESSAGE value=\"move to Java 21\" />\n    <MESSAGE value=\"add mdule IntelliJ file\" />\n    <MESSAGE value=\"21 is not yet released\" />\n    <MESSAGE value=\"Ajout test.txt\" />\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"Ajout test.txt\" />\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 7886e4d441e87702b2fd1c4a269575ba8d54b655)
++++ b/.idea/workspace.xml	(date 1694700896152)
+@@ -4,7 +4,9 @@
+     <option name="autoReloadType" value="SELECTIVE" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="74bd28e4-ede9-4bbb-a92f-dae249a45c06" name="Changes" comment="Ajout test.txt">
++    <list default="true" id="74bd28e4-ede9-4bbb-a92f-dae249a45c06" name="Changes" comment="mapper Q6 terminé">
++      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/bo_dessin.jpg" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/mapper/src/main/java/com/github/forax/framework/mapper/JSONWriter.java" beforeDir="false" afterPath="$PROJECT_DIR$/mapper/src/main/java/com/github/forax/framework/mapper/JSONWriter.java" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/mapper/src/test/java/com/github/forax/framework/mapper/JSONWriterTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/mapper/src/test/java/com/github/forax/framework/mapper/JSONWriterTest.java" afterDir="false" />
+@@ -44,12 +46,14 @@
+   "keyToString": {
+     "RunOnceActivity.OpenProjectViewOnStart": "true",
+     "RunOnceActivity.ShowReadmeOnStart": "true",
++    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+     "full.screen.before.presentation.mode": "false",
+     "git-widget-placeholder": "master",
+     "last_opened_file_path": "/home/alex-baiet/Documents/esipe/inside/write_your_own_java_framework_exercices_old",
+     "project.structure.last.edited": "Modules",
+     "project.structure.proportion": "0.15",
+-    "project.structure.side.proportion": "0.2"
++    "project.structure.side.proportion": "0.2",
++    "settings.editor.selected.configurable": "preferences.sourceCode.Java"
+   }
+ }]]></component>
+   <component name="RecentsManager">
+@@ -90,7 +94,7 @@
+         <option name="Make" enabled="true" />
+       </method>
+     </configuration>
+-    <configuration name="JSONWriterTest$Q6" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
++    <configuration name="JSONWriterTest$Q5" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+       <module name="mapper" />
+       <extension name="coverage">
+         <pattern>
+@@ -99,28 +103,28 @@
+         </pattern>
+       </extension>
+       <option name="PACKAGE_NAME" value="com.github.forax.framework.mapper.JSONWriterTest" />
+-      <option name="MAIN_CLASS_NAME" value="com.github.forax.framework.mapper.JSONWriterTest$Q6" />
++      <option name="MAIN_CLASS_NAME" value="com.github.forax.framework.mapper.JSONWriterTest$Q5" />
+       <option name="TEST_OBJECT" value="class" />
+       <method v="2">
+         <option name="Make" enabled="true" />
+       </method>
+     </configuration>
+-    <configuration name="ORMTest$Q12" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+-      <module name="orm" />
++    <configuration name="JSONWriterTest$Q6" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
++      <module name="mapper" />
+       <extension name="coverage">
+         <pattern>
+-          <option name="PATTERN" value="com.github.forax.framework.orm.*" />
++          <option name="PATTERN" value="com.github.forax.framework.mapper.*" />
+           <option name="ENABLED" value="true" />
+         </pattern>
+       </extension>
+-      <option name="PACKAGE_NAME" value="com.github.forax.framework.orm.ORMTest" />
+-      <option name="MAIN_CLASS_NAME" value="com.github.forax.framework.orm.ORMTest$Q12" />
++      <option name="PACKAGE_NAME" value="com.github.forax.framework.mapper.JSONWriterTest" />
++      <option name="MAIN_CLASS_NAME" value="com.github.forax.framework.mapper.JSONWriterTest$Q6" />
+       <option name="TEST_OBJECT" value="class" />
+       <method v="2">
+         <option name="Make" enabled="true" />
+       </method>
+     </configuration>
+-    <configuration name="ORMTest$Q12.testUserDefinedQueryPerson" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
++    <configuration name="ORMTest$Q12" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+       <module name="orm" />
+       <extension name="coverage">
+         <pattern>
+@@ -130,8 +134,7 @@
+       </extension>
+       <option name="PACKAGE_NAME" value="com.github.forax.framework.orm.ORMTest" />
+       <option name="MAIN_CLASS_NAME" value="com.github.forax.framework.orm.ORMTest$Q12" />
+-      <option name="METHOD_NAME" value="testUserDefinedQueryPerson" />
+-      <option name="TEST_OBJECT" value="method" />
++      <option name="TEST_OBJECT" value="class" />
+       <method v="2">
+         <option name="Make" enabled="true" />
+       </method>
+@@ -154,10 +157,10 @@
+     <recent_temporary>
+       <list>
+         <item itemvalue="JUnit.JSONWriterTest$Q6" />
++        <item itemvalue="JUnit.JSONWriterTest$Q5" />
+         <item itemvalue="JUnit.JSONWriterTest$Q1" />
+         <item itemvalue="JUnit.ORMTest$Q13" />
+         <item itemvalue="JUnit.ORMTest$Q12" />
+-        <item itemvalue="JUnit.ORMTest$Q12.testUserDefinedQueryPerson" />
+       </list>
+     </recent_temporary>
+   </component>
+@@ -178,7 +181,15 @@
+       <option name="project" value="LOCAL" />
+       <updated>1694695505386</updated>
+     </task>
+-    <option name="localTasksCounter" value="2" />
++    <task id="LOCAL-00002" summary="mapper Q6 terminé">
++      <option name="closed" value="true" />
++      <created>1694695861033</created>
++      <option name="number" value="00002" />
++      <option name="presentableId" value="LOCAL-00002" />
++      <option name="project" value="LOCAL" />
++      <updated>1694695861033</updated>
++    </task>
++    <option name="localTasksCounter" value="3" />
+     <servers />
+   </component>
+   <component name="Vcs.Log.Tabs.Properties">
+@@ -194,7 +205,6 @@
+   </component>
+   <component name="VcsManagerConfiguration">
+     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+-    <MESSAGE value="add maven cache" />
+     <MESSAGE value="remove cache from github action" />
+     <MESSAGE value="fix typos in README.md" />
+     <MESSAGE value="use List instead of Stream" />
+@@ -219,6 +229,11 @@
+     <MESSAGE value="add mdule IntelliJ file" />
+     <MESSAGE value="21 is not yet released" />
+     <MESSAGE value="Ajout test.txt" />
+-    <option name="LAST_COMMIT_MESSAGE" value="Ajout test.txt" />
++    <MESSAGE value="mapper Q6 terminé" />
++    <option name="LAST_COMMIT_MESSAGE" value="mapper Q6 terminé" />
++  </component>
++  <component name="XSLT-Support.FileAssociations.UIState">
++    <expand />
++    <select />
+   </component>
+ </project>
+\ No newline at end of file
